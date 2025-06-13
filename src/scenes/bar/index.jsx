@@ -1,13 +1,13 @@
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
-import BarChart from "../../components/BarChart";
+import UsuariosPorDiaChart from "../../components/BarChart";
 
 const Bar = () => {
   return (
     <Box m="20px">
-      <Header title="Bar Chart" subtitle="Simple Bar Chart" />
+      <Header title="Usuarios por Día" subtitle="Cantidad de usuarios registrados cada día" />
       <Box height="75vh">
-        <BarChart />
+        <UsuariosPorDiaChart />
       </Box>
     </Box>
   );
