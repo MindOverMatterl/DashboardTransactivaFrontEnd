@@ -3,6 +3,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import PieChart from "../../components/PieChart";
 import axios from "axios";
+import { endpoints } from "../../services/api";
 
 const Pie = () => {
   const theme = useTheme();
@@ -10,7 +11,7 @@ const Pie = () => {
   const [userTypes, setUserTypes] = useState([]);
 
   useEffect(() => {
-    axios.get("https://localhost:7278/api/Dashboard/usertypes")
+    axios.get(endpoints.dashboard.userTypes)
       .then((res) => setUserTypes(res.data))
       .catch((err) => console.error("Error al obtener datos de tipos de usuario", err));
   }, []);

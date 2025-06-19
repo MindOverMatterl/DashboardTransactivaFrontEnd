@@ -3,64 +3,80 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 
 /**
- * Espera que le pases `data` en este formato:
- * [
- *   { mes: "Enero", total: 1500 },
- *   { mes: "Febrero", total: 2200 }
- * ]
+ * Props:
+ * - data: Array de objetos (tu dataset sin formatear)
+ * - xKey: campo a usar como eje X
+ * - yKey: campo a usar como eje Y
+ * - isCustomLineColors: opcional, si quieres forzar color
+ * - isDashboard: opcional, si estás en modo dashboard
  */
-const LineChart = ({ isCustomLineColors = false, isDashboard = false, data = [] }) => {
+const LineChart = ({
+  data = [],
+  xKey = "x",
+  yKey = "y",
+  isCustomLineColors = false,
+  isDashboard = false,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Transformamos la data real a formato Nivo
   const formattedData = [
     {
       id: "Pagos",
       color: tokens("dark").greenAccent[500],
       data: data.map((item) => ({
-        x: item.mes,
-        y: item.total,
+        x: item[xKey],
+        y: item[yKey],
       })),
     },
   ];
+
+  const formatoSoles = new Intl.NumberFormat("es-PE", {
+    style: "currency",
+    currency: "PEN",
+    minimumFractionDigits: 2,
+  });
 
   return (
     <ResponsiveLine
       data={formattedData}
       theme={{
         axis: {
-          domain: {
-            line: {
-              stroke: colors.grey[100],
-            },
-          },
-          legend: {
-            text: {
-              fill: colors.grey[100],
-            },
-          },
+          domain: { line: { stroke: colors.grey[100] } },
+          legend: { text: { fill: colors.grey[100] } },
           ticks: {
-            line: {
-              stroke: colors.grey[100],
-              strokeWidth: 1,
-            },
-            text: {
-              fill: colors.grey[100],
-            },
+            line: { stroke: colors.grey[100], strokeWidth: 1 },
+            text: { fill: colors.grey[100] },
           },
         },
         legends: {
-          text: {
-            fill: colors.grey[100],
-          },
+          text: { fill: colors.grey[100] },
         },
         tooltip: {
           container: {
-            color: colors.primary[500],
+            background: "#2d2d2d",
+            color: "#fff",
+            padding: "6px 12px",
+            borderRadius: "4px",
+            fontSize: "14px",
           },
         },
       }}
+      tooltip={({ point }) => (
+        <div
+          style={{
+            background: "#2d2d2d",
+            color: "#fff",
+            padding: "6px 12px",
+            borderRadius: "4px",
+            fontSize: "14px",
+          }}
+        >
+          <strong>{formatoSoles.format(point.data.y)}</strong>
+          <br />
+          Fecha: {point.data.x}
+        </div>
+      )}
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }}
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
       xScale={{ type: "point" }}
@@ -80,17 +96,16 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, data = [] 
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "Mes",
+        legend: isDashboard ? undefined : xKey,
         legendOffset: 36,
         legendPosition: "middle",
       }}
       axisLeft={{
         orient: "left",
-        tickValues: 5,
         tickSize: 3,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "Monto",
+        legend: isDashboard ? undefined : yKey,
         legendOffset: -40,
         legendPosition: "middle",
       }}

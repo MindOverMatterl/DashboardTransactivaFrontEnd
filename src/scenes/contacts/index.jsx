@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { endpoints } from "../../services/api";
 
 const Contacts = () => {
   const theme = useTheme();
@@ -14,7 +15,7 @@ const Contacts = () => {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await axios.get("https://localhost:7278/api/users");
+        const response = await axios.get(endpoints.users.all);
 
         const data = response.data.map((u) => ({
           id: u.id,

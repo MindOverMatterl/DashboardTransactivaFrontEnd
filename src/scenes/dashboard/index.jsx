@@ -15,6 +15,8 @@ import StatBox from "../../components/StatBox";
 import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
 import PieChart from "../../components/PieChart";
+import HorizontalBarChart from "../../components/HorizontalBarChart";
+import ScatterPlotChart from "../../components/ScatterPlotChart";
 import axios from "axios";
 import { endpoints } from "../../services/api"; // ✅ import rutas correctas
 import dayjs from "dayjs";
@@ -25,11 +27,16 @@ const Dashboard = () => {
   const [pagos, setPagos] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
   const [monthlyPayments, setMonthlyPayments] = useState([]);
-
+  const [pagosPorDia, setPagosPorDia] = useState([]);
+  const [pagosPorProveedor, setPagosPorProveedor] = useState([]);
+  const [tiempoEntrega, setTiempoEntrega] = useState([]);
   useEffect(() => {
     axios.get(endpoints.pagos).then((res) => setPagos(res.data));
     axios.get(endpoints.dashboard.userTypes).then((res) => setUserTypes(res.data));
     axios.get(endpoints.dashboard.monthlyPayments).then((res) => setMonthlyPayments(res.data));
+    axios.get(endpoints.dashboard.pagosPorDia).then((res) => { setPagosPorDia(res.data); });
+    axios.get(endpoints.dashboard.pagosPorProveedor).then((res) => setPagosPorProveedor(res.data));
+    axios.get(endpoints.dashboard.tiempoEntrega).then((res) => setTiempoEntrega(res.data))
   }, []);
 
   return (
@@ -77,83 +84,53 @@ const Dashboard = () => {
           />
         </Box>
 
-        {/* Línea de pagos mensuales */}
-          <Box gridColumn="span 8" gridRow="span 2" backgroundColor={colors.primary[400]}>
-            <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
-                  Pagos Mensuales
-                </Typography>
-                <Typography variant="h3" fontWeight="bold" color={colors.greenAccent[500]}>
-                  Total S/.{monthlyPayments.length > 0
-                  ? monthlyPayments.reduce((acc, p) => acc + (p.totalPagado ?? 0), 0).toFixed(2)
-                  : "0.00"}
-                </Typography>
-              </Box>
-              <Box>
-                <IconButton>
-                  <DownloadOutlinedIcon sx={{ fontSize: "26px", color: colors.greenAccent[500] }} />
-                </IconButton>
-              </Box>
-            </Box>
-            <Box height="250px" m="-20px 0 0 0">
-              <LineChart data={monthlyPayments || []} isDashboard={true} />
-            </Box>
-          </Box>
-
-        {/* Lista de pagos */}
+        {/* Línea de pagos por día */}
+        <Box gridColumn="span 8" gridRow="span 2" backgroundColor={colors.primary[400]}>
           <Box
-            gridColumn="span 4"
-            gridRow="span 2"
-            backgroundColor={colors.primary[400]}
-            overflow="auto"
+            mt="25px"
+            p="0 30px"
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-                Últimos pagos
+            <Box>
+              <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
+                Pagos por Día
+              </Typography>
+              <Typography variant="h3" fontWeight="bold" color={colors.greenAccent[500]}>
+                Total S/.{pagosPorDia.length > 0
+                  ? pagosPorDia.reduce((acc, p) => acc + (p.totalPagado ?? 0), 0).toFixed(2)
+                  : "0.00"}
               </Typography>
             </Box>
-
-            {pagos.slice(0, 10).map((pago, i) => (
-              <Box
-                key={`${pago.id}-${i}`}
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                borderBottom={`4px solid ${colors.primary[500]}`}
-                p="15px"
-              >
-                <Box>
-                  <Typography color={colors.greenAccent[500]} variant="h5" fontWeight="600">
-                    {pago.metodo && pago.metodo.trim() !== "" ? pago.metodo : ""}
-                  </Typography>
-                  <Typography color={colors.grey[100]}>
-                    Pago #{pago.id}
-                  </Typography>
-                </Box>
-
-                <Box color={colors.grey[100]}>
-                  {dayjs(pago.fechaPago).isValid()
-                    ? dayjs(pago.fechaPago).format("DD/MM/YYYY")
-                    : "Fecha inválida"}
-                </Box>
-
-                <Box
-                  backgroundColor={colors.greenAccent[500]}
-                  p="5px 10px"
-                  borderRadius="4px"
-                >
-                  S/.{pago.monto?.toFixed(2) ?? "0.00"}
-                </Box>
-              </Box>
-            ))}
+            <Box>
+              <IconButton>
+                <DownloadOutlinedIcon sx={{ fontSize: "26px", color: colors.greenAccent[500] }} />
+              </IconButton>
+            </Box>
           </Box>
+          <Box height="250px" m="-20px 0 0 0">
+            <LineChart
+              data={pagosPorDia.map((p) => ({
+                fecha: dayjs(p.fecha).format("DD/MM"),
+                totalPagado: p.totalPagado,
+              }))}
+              xKey="fecha"
+              yKey="totalPagado"
+              isDashboard={true}
+            />
+          </Box>
+        </Box>
+
+        {/* BarChart de productos */}
+        <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]}>
+          <Typography variant="h5" fontWeight="600" sx={{ padding: "30px 30px 0 30px" }} color={colors.grey[100]}>
+            Productos Más Vendidos
+          </Typography>
+          <Box height="250px" mt="-20px">
+            <BarChart endpoint={endpoints.dashboard.productosTop} isDashboard={true} />
+          </Box>
+        </Box>
 
         {/* PieChart de tipos de usuario */}
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]} p="30px">
@@ -165,13 +142,48 @@ const Dashboard = () => {
           </Box>
         </Box>
 
-        {/* BarChart de productos */}
+        {/* Diagrama de Dispersión: Tiempo entre pago y llegada */}
+        <Box
+          gridColumn="span 4"
+          gridRow="span 2"
+          backgroundColor={colors.primary[400]}
+        >
+          <Typography
+            variant="h5"
+            fontWeight="600"
+            sx={{ padding: "30px 30px 0 30px" }}
+            color={colors.grey[100]}
+          >
+            Tiempo de Entrega vs Fecha de Pago
+          </Typography>
+          <Box height="250px" mt="-20px" px="10px">
+            <ScatterPlotChart
+              endpoint={endpoints.dashboard.tiempoEntrega}
+              isDashboard={true}
+            />
+          </Box>
+        </Box>
+
+
+        {/* Pagos por proveddor */}
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]}>
-          <Typography variant="h5" fontWeight="600" sx={{ padding: "30px 30px 0 30px" }} color={colors.grey[100]}>
-            Productos Más Vendidos
+          <Typography
+            variant="h5"
+            fontWeight="600"
+            sx={{ padding: "30px 30px 0 30px" }}
+            color={colors.grey[100]}
+          >
+            Ingresos por Proveedor
           </Typography>
           <Box height="250px" mt="-20px">
-            <BarChart endpoint={endpoints.dashboard.productosTop} isDashboard={true} />
+            <HorizontalBarChart
+              data={pagosPorProveedor
+                .sort((a, b) => b.total - a.total)
+                .slice(0, 5)}
+              xKey="total"
+              yKey="proveedor"
+              isDashboard={true}
+            />
           </Box>
         </Box>
       </Box>

@@ -7,12 +7,15 @@ const PieChart = ({ data }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Transformación (opcional, por si quieres colores personalizados)
-  const chartData = data.map((item, index) => ({
+  // Color que se adapta automáticamente al modo claro/oscuro
+  const labelColor = theme.palette.mode === "light" ? "#111111" : "#e0e0e0";
+  const tooltipBg = theme.palette.mode === "light" ? "#ffffff" : colors.primary[500];
+
+  // Transformación (por si quieres colores personalizados)
+  const chartData = data.map((item) => ({
     id: item.tipoUsuario,
     label: item.tipoUsuario,
     value: item.cantidad,
-    color: ["#f47560", "#e8c1a0", "#97e3d5", "#61cdbb"][index % 4], // puedes extender colores
   }));
 
   return (
@@ -22,19 +25,19 @@ const PieChart = ({ data }) => {
         axis: {
           ticks: {
             text: {
-              fill: colors.grey[100],
+              fill: labelColor,
             },
           },
         },
         legends: {
           text: {
-            fill: colors.grey[100],
+            fill: labelColor,
           },
         },
         tooltip: {
           container: {
-            background: colors.primary[500],
-            color: colors.grey[100],
+            background: tooltipBg,
+            color: labelColor,
           },
         },
       }}
@@ -46,7 +49,7 @@ const PieChart = ({ data }) => {
       borderWidth={1}
       borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
       arcLinkLabelsSkipAngle={10}
-      arcLinkLabelsTextColor={colors.grey[100]}
+      arcLinkLabelsTextColor={labelColor}
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{ from: "color" }}
       arcLabelsSkipAngle={10}
@@ -59,7 +62,7 @@ const PieChart = ({ data }) => {
           translateY: 56,
           itemWidth: 100,
           itemHeight: 18,
-          itemTextColor: colors.grey[100],
+          itemTextColor: labelColor,
           symbolSize: 18,
           symbolShape: "circle",
         },
