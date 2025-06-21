@@ -1,5 +1,6 @@
 // src/services/api.js
-const BASE_URL = "https://localhost:7278/api"; // ✅ correcto
+//const BASE_URL = "https://localhost:7278/api"; // ✅ correcto
+const BASE_URL = "https://dashboardtransactiva-production.up.railway.app/api";
 
 export const endpoints = {
   dashboard: {

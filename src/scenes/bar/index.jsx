@@ -5,7 +5,7 @@ import UsuariosPorDiaChart from "../../components/BarChart";
 const Bar = () => {
   return (
     <Box m="20px">
-      <Header title="Usuarios por Día" subtitle="Cantidad de usuarios registrados cada día" />
+      <Header title="Productos mas vendidos" subtitle="" />
       <Box
         height="50vh"
         width="80%"         // ⬅️ menor que 100%

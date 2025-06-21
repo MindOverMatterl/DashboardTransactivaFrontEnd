@@ -128,13 +128,7 @@ const Sidebar = () => {
             >
               Data
             </Typography>
-            <Item
-              title="Usuarios"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            
             <Item
               title="Proveedores"
               to="/contacts"
@@ -142,8 +136,6 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            
-
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -174,6 +166,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            
             <Item
               title="Gráfico Pastel"
               to="/pie"
