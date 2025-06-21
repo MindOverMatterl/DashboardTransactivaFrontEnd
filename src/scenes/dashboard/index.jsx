@@ -26,17 +26,17 @@ const Dashboard = () => {
 
   const [pagos, setPagos] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
-  const [monthlyPayments, setMonthlyPayments] = useState([]);
+  //const [monthlyPayments, setMonthlyPayments] = useState([]);
   const [pagosPorDia, setPagosPorDia] = useState([]);
   const [pagosPorProveedor, setPagosPorProveedor] = useState([]);
-  const [tiempoEntrega, setTiempoEntrega] = useState([]);
+  //const [tiempoEntrega, setTiempoEntrega] = useState([]);
   useEffect(() => {
     axios.get(endpoints.pagos).then((res) => setPagos(res.data));
     axios.get(endpoints.dashboard.userTypes).then((res) => setUserTypes(res.data));
-    axios.get(endpoints.dashboard.monthlyPayments).then((res) => setMonthlyPayments(res.data));
+    //axios.get(endpoints.dashboard.monthlyPayments).then((res) => setMonthlyPayments(res.data));
     axios.get(endpoints.dashboard.pagosPorDia).then((res) => { setPagosPorDia(res.data); });
     axios.get(endpoints.dashboard.pagosPorProveedor).then((res) => setPagosPorProveedor(res.data));
-    axios.get(endpoints.dashboard.tiempoEntrega).then((res) => setTiempoEntrega(res.data))
+    //axios.get(endpoints.dashboard.tiempoEntrega).then((res) => setTiempoEntrega(res.data))
   }, []);
 
   return (
