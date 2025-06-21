@@ -125,7 +125,7 @@ const Dashboard = () => {
         {/* BarChart de productos */}
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]}>
           <Typography variant="h5" fontWeight="600" sx={{ padding: "30px 30px 0 30px" }} color={colors.grey[100]}>
-            Productos Más Vendidos
+            Usuarios registrados
           </Typography>
           <Box height="250px" mt="-20px">
             <BarChart endpoint={endpoints.dashboard.productosTop} isDashboard={true} />
